@@ -46,7 +46,7 @@ base_illegal_sequences = [
 ##########################################################################################################################################
 
 
-def generate_random_seq(seq_len = 100, gc_content = 50, use_default_illegal_seqs = None, illegal_seq_file = None):
+def generate_random_seq(seq_len = 100, gc_content = 50, illegal_seqs = None, use_default_illegal_seqs = None, illegal_seq_file = None):
 	remove_seqs = use_default_illegal_seqs or illegal_seq_file
 	seq_len = int(seq_len)
 	gc_content = float(gc_content)
@@ -60,6 +60,9 @@ def generate_random_seq(seq_len = 100, gc_content = 50, use_default_illegal_seqs
 	# add default illegal seqs when demanded
 	if use_default_illegal_seqs:
 		collected_illegal_seqs.extend(base_illegal_sequences)
+
+	if illegal_seqs:
+		collected_illegal_seqs.extend(illegal_seqs)
 	
 	# If some seqs shall not appear in returned sequence then they are transformed to a Seq object
 	if remove_seqs:
