@@ -2,8 +2,8 @@ process assemble_sequences {
 
 	input:
 	tuple path(xrRNA),path(spacer),path(IRES),path(CDS)
-	val(rnd_spacers)
-	val(specific_spacers)
+	val(rnd_spacer)
+	val(specific_spacer)
 	val(percent_specific_spacers)
 	val(spacer_min_length)
 	val(spacer_max_length)
@@ -14,17 +14,22 @@ process assemble_sequences {
 	path("generated_sequences.fna"),		emit: sequences
 	path("${task.process}.version.txt"),	emit: version
 
+	script:
+	def spacer_fixed_length = spacer_fixed_length ? '--spacer_fixed_length ' + spacer_fixed_length : ''
+	def only_random_spacer	= rnd_spacer ? '--only_random_spacer' : ''
+	def only_specific_spacer = specific_spacer ? '--only_specific_spacer' : ''
+
 	"""
 	generate_sequences.py --xrRNA_file ${xrRNA} \
 		--spacer_file ${spacer} \
 		--IRES_file ${IRES}	\
 		--CDS_file ${CDS} \
-		--only_random_spacers ${rnd_spacers} \
-		--only_specific_spacers ${specific_spacers} \
+		${only_random_spacer} \
+		${only_specific_spacer} \
 		--percent_specific_spacers ${percent_specific_spacers} \
-		--spacer_min_len ${spacer_min_len} \
-		--spacer_max_len ${spacer_max_len} \
-		--spacer_fixed_length ${spacer_fixed_length} \
+		--spacer_min_len ${spacer_min_length} \
+		--spacer_max_len ${spacer_max_length} \
+		${spacer_fixed_length} \
 		--output generated_sequences.fna	\
 		--number_sequences ${number_sequences}
 

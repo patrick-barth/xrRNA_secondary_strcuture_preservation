@@ -136,7 +136,10 @@ def main(xrRNA_file,spacer_file,IRES_file,CDS_file,only_random_spacers,only_spec
 			f'cds:{cds_start_pos}-{cds_end_pos}'
 		)
 
-		sequence = tmp_xrRNA_seq.seq + Seq(tmp_spacer_seq) + tmp_ires_seq.seq + tmp_cds_seq.seq
+		if isinstance(tmp_spacer_seq,str):
+			tmp_spacer_seq = Seq(tmp_spacer_seq)
+
+		sequence = tmp_xrRNA_seq.seq + tmp_spacer_seq + tmp_ires_seq.seq + tmp_cds_seq.seq
 		sequence = sequence.upper()
 
 		# Check if illegal sequences appear in resulting sequence
@@ -157,7 +160,7 @@ def main(xrRNA_file,spacer_file,IRES_file,CDS_file,only_random_spacers,only_spec
 		#if not keep_seq:
 		#	continue
 
-		record = SeqRecord(Seq(sequence),
+		record = SeqRecord(sequence,
 							id = id,
 							description = description)
 		

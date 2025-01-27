@@ -56,7 +56,10 @@ workflow generate_RNA_sequences {
 		input_ires
 		input_cds
 	main:
-		assemble_sequences(input_xrRNA,input_spacer,input_ires,input_cds,
+		assemble_sequences(input_xrRNA
+			.combine(input_spacer)
+			.combine(input_ires)
+			.combine(input_cds),
 			params.only_random_spacers,
 			params.only_specific_spacers,
 			params.percent_specific_spacers,
@@ -103,7 +106,7 @@ workflow {
 	collect_workflow_metrics()
 
 	// Collect and output tool versions
-	versions = generate_circasRNAs.out.versions
+	versions = generate_RNA_sequences.out.versions
 		.concat(test_secondary_structure.out.versions)
 	collect_versions(versions.flatten()
 		.toList())
