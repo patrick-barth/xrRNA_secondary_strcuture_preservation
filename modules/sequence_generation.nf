@@ -1,4 +1,4 @@
-process split_target_mRNA {
+process assemble_sequences {
 
 	input:
 	tuple path(xrRNA),path(spacer),path(IRES),path(CDS)
