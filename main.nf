@@ -12,7 +12,7 @@ include{
 
 //import processes revolving around sequence manipulation
 include{
-	split_target_mRNA
+	assemble_sequences
 } from './modules/sequence_generation.nf'
 
 //import general processes
@@ -44,55 +44,60 @@ log.info """\
 		.stripIndent()
 
 //input files
-//TODO: Adapt everything below
-input_mRNA		= Channel.fromPath(params.target_mRNA)
-input_stem		= Channel.fromPath(params.stem_file)
-input_linker	= Channel.fromPath(params.linker_file)
+input_xrRNA		= Channel.fromPath(params.xrRNA_file)
+input_spacer	= Channel.fromPath(params.spacer_file)
+input_ires		= Channel.fromPath(params.ires_file)
+input_cds		= Channel.fromPath(params.cds_file)
 
-workflow generate_circasRNAs {
+workflow generate_RNA_sequences {
 	take:
-		input_mRNA
-		input_stem
-		input_linker
+		input_xrRNA
+		input_spacer
+		input_ires
+		input_cds
 	main:
-		predict_secondary_structure(input_mRNA)
-		split_target_mRNA(predict_secondary_structure.out.structure
-			.combine(input_stem)
-			.combine(input_linker),
-			params.loop_length)
+		assemble_sequences(input_xrRNA,input_spacer,input_ires,input_cds,
+			params.only_random_spacers,
+			params.only_specific_spacers,
+			params.percent_specific_spacers,
+			params.spacer_min_length,
+			params.spacer_max_length,
+			params.spacer_fixed_length,
+			params.number_sequences
+		)
 
 		// collect versions
-		versions = predict_secondary_structure.out.version.first()
-			.concat(split_target_mRNA.out.version.first())
+		versions = assemble_sequences.out.version.first()
 
 	emit:
-		split_mRNA 	= split_target_mRNA.out.split_seq
-		versions = versions
+		sequences 	= assemble_sequences.out.sequences
+		versions 	= versions
 }
 
 workflow test_secondary_structure {
 	take:
-		split_RNAs
+		rna_sequences
 	main:
-		predict_secondary_structure(split_RNAs)
-		tabelize_secondary_structures(predict_secondary_structure.out.structure)
+		predict_secondary_structure(rna_sequences)
+		'''tabelize_secondary_structures(predict_secondary_structure.out.structure)
 		sort_table(tabelize_secondary_structures.out.table)
 		extract_visualizations(sort_table.out.sorted_table_to_merge
 			.join(predict_secondary_structure.out.visualization),
-			params.number_top_hits)
+			params.number_top_hits)'''
 	
 		versions = predict_secondary_structure.out.version.first()
-			.concat(tabelize_secondary_structures.out.version.first())
-			.concat(sort_table.out.version.first())
+			'''.concat(tabelize_secondary_structures.out.version.first())
+			.concat(sort_table.out.version.first())'''
 	emit:
 		versions = versions
 }
 
 workflow {
-	generate_circasRNAs(input_mRNA,
-		input_stem,
-		input_linker)
-	test_secondary_structure(generate_circasRNAs.out.split_mRNA)
+	generate_RNA_sequences(input_xrRNA,
+		input_spacer,
+		input_ires,
+		input_cds)
+	test_secondary_structure(generate_RNA_sequences.out.sequences)
 
 
 	collect_workflow_metrics()
