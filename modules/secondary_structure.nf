@@ -32,7 +32,7 @@ process tabelize_secondary_structures {
 	sort_structure_prediction.py --sequence ${sequences} \\
 		--output ${sequences.simpleName}.secondary_structure.tsv
 
-	echo -e "${task.process}\tsplit_target_seq.py\tcustom_script" > ${task.process}.version.txt
+	echo -e "${task.process}\tsort_structure_prediction.py\tcustom_script" > ${task.process}.version.txt
     echo -e "${task.process}\tpython\t\$(python --version | cut -d ' ' -f 2 )" >> ${task.process}.version.txt
 	"""
 }

@@ -82,8 +82,8 @@ workflow test_secondary_structure {
 		rna_sequences
 	main:
 		predict_secondary_structure(rna_sequences)
-		'''tabelize_secondary_structures(predict_secondary_structure.out.structure)
-		sort_table(tabelize_secondary_structures.out.table)
+		tabelize_secondary_structures(predict_secondary_structure.out.structure)
+		'''sort_table(tabelize_secondary_structures.out.table)
 		extract_visualizations(sort_table.out.sorted_table_to_merge
 			.join(predict_secondary_structure.out.visualization),
 			params.number_top_hits)'''
