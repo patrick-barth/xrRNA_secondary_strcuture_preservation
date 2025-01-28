@@ -26,7 +26,7 @@ process extract_matching_structures {
 	path(sequences)
 
 	output:
-	path("matching_secondary_structures.fna"),					emit: sequences
+	path("matching_secondary_structures.fna"),					emit: sequences,	optional:true
 	path("${task.process}.version.txt"),						emit: version
 
 	"""
