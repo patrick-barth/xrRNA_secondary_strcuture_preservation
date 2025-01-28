@@ -18,21 +18,22 @@ process predict_secondary_structure {
 	"""
 }
 
-process tabelize_secondary_structures {
+process extract_matching_structures {
 	tag {sequences.simpleName}
+	publishDir "${params.output_dir}", mode: 'copy', pattern: "matching_secondary_structures.fna"
 
 	input:
 	path(sequences)
 
 	output:
-	path("${sequences.simpleName}.secondary_structure.tsv"),	emit: table
+	path("matching_secondary_structures.fna"),					emit: sequences
 	path("${task.process}.version.txt"),						emit: version
 
 	"""
-	sort_structure_prediction.py --sequence ${sequences} \\
-		--output ${sequences.simpleName}.secondary_structure.tsv
+	extract_matching_structures.py --sequence ${sequences} \\
+		--output matching_secondary_structures.fna
 
-	echo -e "${task.process}\tsort_structure_prediction.py\tcustom_script" > ${task.process}.version.txt
+	echo -e "${task.process}\textract_matching_structures.py\tcustom_script" > ${task.process}.version.txt
     echo -e "${task.process}\tpython\t\$(python --version | cut -d ' ' -f 2 )" >> ${task.process}.version.txt
 	"""
 }

@@ -5,9 +5,7 @@ nextflow.enable.dsl=2
 //import processes revolving around secondary structure prediction
 include{
     predict_secondary_structure
-	tabelize_secondary_structures
-	sort_table
-	extract_visualizations
+	extract_matching_structures
 } from './modules/secondary_structure.nf'
 
 //import processes revolving around sequence manipulation
@@ -82,15 +80,15 @@ workflow test_secondary_structure {
 		rna_sequences
 	main:
 		predict_secondary_structure(rna_sequences)
-		tabelize_secondary_structures(predict_secondary_structure.out.structure)
+		extract_matching_structures(predict_secondary_structure.out.structure)
 		'''sort_table(tabelize_secondary_structures.out.table)
 		extract_visualizations(sort_table.out.sorted_table_to_merge
 			.join(predict_secondary_structure.out.visualization),
 			params.number_top_hits)'''
 	
 		versions = predict_secondary_structure.out.version.first()
-			'''.concat(tabelize_secondary_structures.out.version.first())
-			.concat(sort_table.out.version.first())'''
+			.concat(extract_matching_structures.out.version.first())
+
 	emit:
 		versions = versions
 }
