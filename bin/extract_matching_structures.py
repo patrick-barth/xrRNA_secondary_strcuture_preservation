@@ -88,7 +88,8 @@ def main(sequence_file,output):
 														id = f'{id} regex:{match.group()}'))
 
 	if len(collected_entries) == 0:
-		errx('No matches found')
+		print('No matches found')
+		exit(0)
 
 	with open(output,'w') as output_handle:
 		SeqIO.write(collected_entries, output_handle, "fasta")

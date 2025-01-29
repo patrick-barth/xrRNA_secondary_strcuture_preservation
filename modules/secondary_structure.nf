@@ -1,4 +1,5 @@
 process predict_secondary_structure {
+	errorStrategy 'ignore'
 	tag {mRNA.simpleName}
 
 	input:
