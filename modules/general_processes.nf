@@ -1,4 +1,21 @@
 /*
+ * Collect all files from channel and emit a single file
+ */
+process collect_files{
+    publishDir "${params.output_dir}", mode: "move", pattern: "collected_valid_secondary_structures.fna"
+
+    input:
+    path(sequences)
+
+    output:
+    path("collected_valid_secondary_structures.fna"), emit: collected_files
+
+    """
+    cat ${sequences} > collected_valid_secondary_structures.fna
+    """
+}
+
+/*
  * Collects a variety of different metrics such as the command line used to execute the workflow and the parameters used
  */
 process collect_workflow_metrics{

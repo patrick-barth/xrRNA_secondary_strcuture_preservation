@@ -17,6 +17,7 @@ include{
 include{
     collect_workflow_metrics
     collect_versions
+	collect_files
 } from './modules/general_processes.nf'
 
 
@@ -81,6 +82,8 @@ workflow test_secondary_structure {
 	main:
 		predict_secondary_structure(rna_sequences)
 		extract_matching_structures(predict_secondary_structure.out.structure)
+		collect_files(extract_matching_structures.out.sequences
+			.collect())
 		'''sort_table(tabelize_secondary_structures.out.table)
 		extract_visualizations(sort_table.out.sorted_table_to_merge
 			.join(predict_secondary_structure.out.visualization),
@@ -98,7 +101,8 @@ workflow {
 		input_spacer,
 		input_ires,
 		input_cds)
-	test_secondary_structure(generate_RNA_sequences.out.sequences)
+	test_secondary_structure(generate_RNA_sequences.out.sequences
+		.splitFasta(by:10))
 
 
 	collect_workflow_metrics()
