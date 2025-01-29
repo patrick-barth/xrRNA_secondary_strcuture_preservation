@@ -80,7 +80,8 @@ workflow test_secondary_structure {
 	take:
 		rna_sequences
 	main:
-		predict_secondary_structure(rna_sequences)
+		predict_secondary_structure(rna_sequences
+			.splitFasta(by:10,file:true))
 		extract_matching_structures(predict_secondary_structure.out.structure)
 		collect_files(extract_matching_structures.out.sequences
 			.collect())
@@ -101,8 +102,7 @@ workflow {
 		input_spacer,
 		input_ires,
 		input_cds)
-	test_secondary_structure(generate_RNA_sequences.out.sequences
-		.splitFasta(by:10))
+	test_secondary_structure(generate_RNA_sequences.out.sequences)
 
 
 	collect_workflow_metrics()
